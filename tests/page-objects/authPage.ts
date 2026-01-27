@@ -28,7 +28,7 @@ export class AuthPage {
   async fillForm() {
     await this.firstName.fill('Sneha');
     await this.lastName.fill('Pawar');
-    await this.username.fill('Snehap');
+    await this.username.fill('Snehabalajipawar');
     await this.email.fill('snehapawar@gmail.com');
     await this.password.fill('Snehapawar@1234');
     await this.passwordConfirmation.fill('Snehapawar@1234');

@@ -30,8 +30,8 @@ export class AuthPage {
     await this.lastName.fill('Pawar');
     await this.username.fill('Snehap');
     await this.email.fill('snehapawar@gmail.com');
-    await this.password.fill('Snehapawar');
-    await this.passwordConfirmation.fill('Snehapawar');
+    await this.password.fill('Snehapawar@1234');
+    await this.passwordConfirmation.fill('Snehapawar@1234');
     await this.privacyPolicyCheckbox.check();
     await this.checkApplicableBox.check();
     await this.createAccountButton.click();

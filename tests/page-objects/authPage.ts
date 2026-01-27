@@ -1,4 +1,4 @@
-import { expect, Page, Locator } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 export class AuthPage {
   readonly page: Page;
@@ -12,13 +12,13 @@ export class AuthPage {
   readonly checkApplicableBox: Locator;
   readonly createAccountButton: Locator;
 
-  Constructor(page: Page) {
+  constructor(page: Page) {
     this.page = page;
     this.firstName = page.getByPlaceholder('Enter your first name');
     this.lastName = page.getByPlaceholder('Enter your last name');
     this.username = page.getByPlaceholder('eg. johndoe9');
-    this.email = page.getByPlaceholder('eg. johndoe9');
-    this.password = page.getByPlaceholder('johndoe@example.com');
+    this.email = page.getByPlaceholder('johndoe@example.com');
+    this.password = page.getByPlaceholder('Enter password');
     this.passwordConfirmation = page.getByPlaceholder('Confirm password');
     this.privacyPolicyCheckbox = page.locator('#mantine-6qge8kjm7');
     this.checkApplicableBox = page.locator('#mantine-mh9u502zr');

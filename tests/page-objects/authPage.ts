@@ -18,8 +18,10 @@ export class AuthPage {
     this.lastName = page.getByPlaceholder('Enter your last name');
     this.username = page.getByTestId('text-input-Username');
     this.email = page.getByTestId('email-input-Email');
-    this.password = page.getByPlaceholder('Enter password');
-    this.passwordConfirmation = page.getByPlaceholder('Confirm password');
+    this.password = page.getByTestId('password-input-Password');
+    this.passwordConfirmation = page.getByTestId(
+      'password-input-Password Confirmation',
+    );
     this.privacyPolicyCheckbox = page.getByTestId('consentedToTerms');
     this.checkApplicableBox = page.getByTestId('consentedToCallMessage');
     this.createAccountButton = page.getByRole('button', {
@@ -30,8 +32,8 @@ export class AuthPage {
   async fillForm() {
     await this.firstName.fill('Sneha');
     await this.lastName.fill('Pawar');
-    await this.username.fill('Snehabalajipawar');
-    await this.email.fill('snehapawar@gmail.com');
+    await this.username.fill('Snehabalajipa');
+    await this.email.fill('snehabpawar@gmail.com');
     await this.password.fill('Snehapawar@1234');
     await this.passwordConfirmation.fill('Snehapawar@1234');
     await this.privacyPolicyCheckbox.check();

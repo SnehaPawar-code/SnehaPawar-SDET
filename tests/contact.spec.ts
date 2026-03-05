@@ -1,7 +1,12 @@
 import { test, expect } from '@playwright/test';
+import pino from 'pino';
+
+const step = pino({ name: 'contact-tests' });
 
 test('Add contact', async ({ page }) => {
   const uniqueId = Date.now();
+
+  step.info('Step 1: Navigate to addUser page and sign up');
   await page.goto('https://thinking-tester-contact-list.herokuapp.com/addUser');
   await page.getByPlaceholder('First Name').fill('Test');
   await page.getByPlaceholder('Last Name').fill('User');
@@ -9,7 +14,11 @@ test('Add contact', async ({ page }) => {
   await page.getByPlaceholder('Password').fill('Test@1234');
   await page.getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('h1')).toHaveText('Contact List');
+
+  step.info('Step 2: Click Add a New Contact');
   await page.getByRole('button', { name: 'Add a New Contact' }).click();
+
+  step.info('Step 3: Fill in contact details');
   await page.getByPlaceholder('First Name').fill('Sneha');
   await page.getByPlaceholder('Last Name').fill('Pawar');
   const today = new Date();
@@ -28,6 +37,8 @@ test('Add contact', async ({ page }) => {
   await page.getByPlaceholder('State or Province').fill('Maharashtra');
   await page.getByPlaceholder('Postal Code').fill('411001');
   await page.getByPlaceholder('Country').fill('India');
+
+  step.info('Step 4: Set up route interception for /contacts API');
   let requestBody: Record<string, string> = {};
   let responseBody: Record<string, string> = {};
   let responseStatus = 0;
@@ -44,10 +55,12 @@ test('Add contact', async ({ page }) => {
     }
   });
 
+  step.info('Step 5: Submit the contact form');
   await page.getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('h1')).toHaveText('Contact List');
   await page.unroute('**/contacts');
 
+  step.info('Step 6: Verify request body matches input');
   expect(requestBody.firstName).toBe('Sneha');
   expect(requestBody.lastName).toBe('Pawar');
   expect(requestBody.birthdate).toBe(todayDate);
@@ -60,6 +73,7 @@ test('Add contact', async ({ page }) => {
   expect(requestBody.postalCode).toBe('411001');
   expect(requestBody.country).toBe('India');
 
+  step.info('Step 7: Verify response body matches expected data');
   expect(responseStatus).toBe(201);
   expect(responseBody.firstName).toBe('Sneha');
   expect(responseBody.lastName).toBe('Pawar');

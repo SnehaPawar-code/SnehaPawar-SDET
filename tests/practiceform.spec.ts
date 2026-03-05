@@ -1,26 +1,38 @@
 import { test, expect } from '@playwright/test';
+import pino from 'pino';
 import { testUser, contacts } from './test-data/contactListData';
+
+const step = pino({ name: 'practiceform-tests' });
 
 let storedApiContacts: Record<string, string>[];
 const BASE_URL = 'https://thinking-tester-contact-list.herokuapp.com';
 
 test('Sign up a new user', async ({ page }) => {
+  step.info('Step 1: Navigate to addUser page');
   await page.goto(`${BASE_URL}/addUser`);
+
+  step.info('Step 2: Fill in user registration form');
   await page.getByPlaceholder('First Name').fill(testUser.firstName);
   await page.getByPlaceholder('Last Name').fill(testUser.lastName);
   await page.getByPlaceholder('Email').fill(testUser.email);
   await page.getByPlaceholder('Password').fill(testUser.password);
+
+  step.info('Step 3: Submit and verify Contact List page');
   await page.getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('h1')).toHaveText('Contact List');
 });
 
 test('Login and add two contacts', async ({ page }) => {
+  step.info('Step 1: Navigate to login page');
   await page.goto(`${BASE_URL}/login`);
+
+  step.info('Step 2: Login with test user credentials');
   await page.getByPlaceholder('Email').fill(testUser.email);
   await page.getByPlaceholder('Password').fill(testUser.password);
   await page.getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('h1')).toHaveText('Contact List');
 
+  step.info('Step 3: Add contacts from test data');
   for (const contact of contacts) {
     await page.getByRole('button', { name: 'Add a New Contact' }).click();
     await page.getByPlaceholder('First Name').fill(contact.firstName);
@@ -42,12 +54,16 @@ test('Login and add two contacts', async ({ page }) => {
 });
 
 test('Verify UI matches /contacts API response', async ({ page }) => {
+  step.info('Step 1: Navigate to login page');
   await page.goto(`${BASE_URL}/login`);
+
+  step.info('Step 2: Login with test user credentials');
   await page.getByPlaceholder('Email').fill(testUser.email);
   await page.getByPlaceholder('Password').fill(testUser.password);
   await page.getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('h1')).toHaveText('Contact List');
 
+  step.info('Step 3: Fetch contacts via API');
   const cookies = await page.context().cookies();
   const token = cookies.find((c) => c.name === 'token')?.value;
   const apiResponse = await page.request.get(`${BASE_URL}/contacts`, {
@@ -56,6 +72,7 @@ test('Verify UI matches /contacts API response', async ({ page }) => {
   storedApiContacts = await apiResponse.json();
   expect(storedApiContacts).toHaveLength(2);
 
+  step.info('Step 4: Verify UI rows match API response');
   const rows = page.locator('tr.contactTableBodyRow');
   await expect(rows).toHaveCount(2);
 
@@ -73,20 +90,26 @@ test('Verify UI matches /contacts API response', async ({ page }) => {
 test('Logout and re-login - UI still matches stored API response', async ({
   page,
 }) => {
+  step.info('Step 1: Navigate to login page');
   await page.goto(`${BASE_URL}/login`);
+
+  step.info('Step 2: Login with test user credentials');
   await page.getByPlaceholder('Email').fill(testUser.email);
   await page.getByPlaceholder('Password').fill(testUser.password);
   await page.getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('h1')).toHaveText('Contact List');
 
+  step.info('Step 3: Logout');
   await page.getByRole('button', { name: 'Logout' }).click();
   await expect(page.getByRole('button', { name: 'Submit' })).toBeVisible();
 
+  step.info('Step 4: Re-login with test user credentials');
   await page.getByPlaceholder('Email').fill(testUser.email);
   await page.getByPlaceholder('Password').fill(testUser.password);
   await page.getByRole('button', { name: 'Submit' }).click();
   await expect(page.locator('h1')).toHaveText('Contact List');
 
+  step.info('Step 5: Verify UI rows still match stored API response');
   const rows = page.locator('tr.contactTableBodyRow');
   await expect(rows).toHaveCount(2);
 

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { AuthPage } from '../tests/page-objects/authPage';
 import pino from 'pino';
+import { AuthPage } from '../tests/page-objects/authPage';
 
 const step = pino({ name: 'createaccount-tests' });
 
